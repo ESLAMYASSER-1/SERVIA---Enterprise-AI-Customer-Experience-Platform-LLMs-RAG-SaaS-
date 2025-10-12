@@ -19,6 +19,22 @@
 ```
 
 
+2. set environment variables 
+```bash
+    cd src && cp .env.example .env && cd ..
+```
+- then set your environment variables in <b><i> /src/.env </i></b>
+
+3. Run your Server
+```bash 
+    cd src
+    uvicorn --reload --port=8000 main:app
+    cd ..
+```
+
+
+
+
 
 
 
@@ -38,7 +54,13 @@
 
 ## step by step 
 ### Technical 
-1) 
+1) initiate main.py as entry point for FastAPI
+2) add pydantic BaseSettings for env vars handling 
+3) add routes/base.py to handle landing endpoint 
+4) add lifespan for FastAPI app to handle startup and shtdown
+5) created ResponseEnums 
+6) created routes/data.py to handle data processes 
+7) ...cont... (database collection for admins and companies)
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 
