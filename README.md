@@ -67,4 +67,6 @@
 2) Prep Git and remote Repo
 3) Write down README file 
 4) write down requirements.txt
-5) add .gitignore and .env and .env.example 
+5) add .gitignore and .env and .env.example
+6) create assets folder and it's .gitignore 
+7) 
