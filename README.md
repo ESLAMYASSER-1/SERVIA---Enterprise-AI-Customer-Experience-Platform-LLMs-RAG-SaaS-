@@ -60,11 +60,14 @@
 4) add lifespan for FastAPI app to handle startup and shtdown
 5) created ResponseEnums 
 6) created routes/data.py to handle data processes 
-7) add data base connection to app that connect when server run
+7) add database connection to app that connect when server run
 8) create AdminModel to handle admin operations
 9) created BaseDataModel and BaseController to be the root of data models and controllers
 10) check authentication for admins in dataUpload Endpoint
-9) ...cont... (database collection for admins and companies)
+11) implement dataController to get data from google form // and process data by company name and convert it to json then json to chunks 
+0) ...cont... ()
+0) ...cont... (Create company Model, to handle company names)
+0) 
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 
@@ -73,5 +76,5 @@
 4) write down requirements.txt
 5) add .gitignore and .env and .env.example
 6) create assets folder and it's .gitignore 
-7) -  admin should be added using shell to api
+7) admin should be added using shell to DB
 8) 

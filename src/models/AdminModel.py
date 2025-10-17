@@ -11,6 +11,12 @@ class AdminModel(BaseDataModel):
         
         self.collection = self.db_client[self.settings.MONGODB_ADMIN_COLLECTION]
 
+    @classmethod
+    async def create_instance(cls, db_client: object):
+        instance = cls(db_client)
+        return instance
+    
+
     async def check_if_admin_exists(self, Admin_name: str|None = None, Admin_password: str|None = None)->bool:
         result = await self.collection.find_one({"Name":Admin_name, "Password":Admin_password})
         if result is None:

@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     MONGODB_COMPANY_COLLECTION: str = "COMPANY"
 
     ASSETS_FOLDER: str
+    RAW_DATA_FOLDER:str = "ROW_DATA"
+    RAW_DATA_FILE_NAME: str = "CSAB.csv"
 
     class Config:
         env_file = ".env"
