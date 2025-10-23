@@ -2,6 +2,8 @@ from logging import Logger
 import pandas as pd
 import json
 import re
+import requests
+from urllib.parse import urlparse, parse_qs
 
 from .BaseController import BaseController
 
@@ -9,14 +11,78 @@ logger = Logger(__name__)
 
 class DataController(BaseController):
     def __init__(self):
-        pass
+        super().__init__()
         
     
+    def get_csv_url(self, sheet_url):
+        """Convert Google Sheet URL to CSV export URL"""
+        
+        if sheet_url.endswith('.csv') or 'export?format=csv' in sheet_url:
+            return sheet_url
+        
+        parsed = urlparse(sheet_url)
+        
+        if '/spreadsheets/d/' in sheet_url:
+            doc_id = sheet_url.split('/spreadsheets/d/')[1].split('/')[0]
+        elif '/d/' in sheet_url:
+            doc_id = sheet_url.split('/d/')[1].split('/')[0]
+        else:
+            doc_id = None
+        
+        if not doc_id:
+            raise ValueError("Could not extract document ID from the URL")
+        
+        csv_url = f"https://docs.google.com/spreadsheets/d/{doc_id}/export?format=csv"
+        
+        if 'gid=' in sheet_url:
+            gid = sheet_url.split('gid=')[1].split('&')[0].split('#')[0]
+            csv_url += f"&gid={gid}"
+        
+        return csv_url
+    def get_data_from_GoogleForm(self, csv_path: str, sheet_url:str):
+        try:
+            # Get the proper CSV URL
+            csv_url = self.get_csv_url(sheet_url)
+            logger.info(f"🔄 Converted URL: {csv_url}")
+            
+            print("⬇️ Downloading data from Google Sheet...")
+            
+            # Method 1: Try pandas first
+            try:
+                df = pd.read_csv(csv_url)
+                logger.info("✅ Successfully loaded with pandas")
+            except Exception as e:
+                logger.error(f"❌ Pandas failed: {e}")
+                logger.info("🔄 Trying with requests...")
+                
+                # Method 2: Use requests with proper headers
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+                response = requests.get(csv_url, headers=headers)
+                response.raise_for_status()
+                
+                # Load the CSV content into pandas
+                from io import StringIO
+                df = pd.read_csv(StringIO(response.text))
+                logger.info("✅ Successfully loaded with requests")
+            
+            if len(df) > 0:
+                logger.info(f"\n🔍 dataframe len:{len(df)}")
+            else:
+                logger.error("⚠️  No data found in the sheet")
+            
+            # Save files
+            df.to_csv(csv_path, index=False, encoding="utf-8")
+            logger.info(f"✅ Saved as CSV → {csv_path}")
 
-    def get_data_from_GoogleForm(self, row_data_file_name:str):
-        pass
+            return True
+        except Exception as e:
+            logger.error(f"❌ Error: {e}")
 
-    def csv_to_structured_json(csv_path: str, company_name: str, output_path: str = None):
+            return False
+
+    def csv_to_structured_json(self, csv_path: str, company_name: str, output_path: str = None):
         """
         Convert a single company's data from CSV into structured JSON format.
         
@@ -152,14 +218,18 @@ class DataController(BaseController):
         return chunks
 
 
-    def get_company_chunks(self, company_name: str, output_path: str = None):
+    def get_company_chunks(self, google_sheet_url:str, company_name: str, output_path: str = None):
         csv_path = self.get_row_data_path()
         
-        self.get_data_from_GoogleForm(csv_path)
+        if self.get_data_from_GoogleForm(csv_path, google_sheet_url):
+            logger.info("data has been downloaded from google sheets")
+        else:
+            raise ReferenceError("Google Sheet URL does not exist!!")
 
         data = self.csv_to_structured_json(csv_path, company_name, output_path)
 
         chunks = self.json_to_chunks(data)
+
         if chunks ==[] or chunks is None:
             logger.error(f"can't get company:{company_name} chunks!! ")
             return None 

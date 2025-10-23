@@ -1,9 +1,13 @@
 from fastapi import APIRouter, status, Request
+from datetime import datetime
 from fastapi.responses import JSONResponse
-from models import ResponseEnums, AdminModel, CompanyModel
+from helpers import Settings
+from models import ResponseEnums, AdminModel, CompanyModel, ChunkModel
+from controllers import DataController
+from models.db_schemas import Chunk
 
 dataRouter = APIRouter(prefix="/data", tags=["data"])
-
+settings = Settings()
 
 @dataRouter.get("/start/{company_name}")
 async def InitiateCompany(request: Request, company_name:str, Admin_name: str|None = None, Admin_password: str|None = None):
@@ -14,7 +18,7 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
         status_code=status.HTTP_403_FORBIDDEN,
         )
     
-    adminModel = AdminModel.create_instance(
+    adminModel = await AdminModel.create_instance(
                             db_client=request.app.db_client
                             )
 
@@ -30,13 +34,53 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
         status_code=status.HTTP_403_FORBIDDEN,
         )
 
-    companyModel = CompanyModel.create_instance(
+    companyModel = await CompanyModel.create_instance(
                             db_client= request.app.db_client
                             )
     
-    company = companyModel.get_company_or_create_one(
+    company = await companyModel.get_company_or_create_one(
         company_name = company_name
     )
+
+    dataController = DataController()
+    chunks = dataController.get_company_chunks(settings.GOOGLE_SHEET_URL, company_name)
+
+    if len(chunks) <= 0 :
+        return JSONResponse(content={
+            "Message": "Company data does not exist",
+            "chunks": f"chunks len: {len(chunks)}"
+        },
+        status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    mod_chunks = [
+        Chunk(
+            company_name= company.Name,
+            company_id= str(company.id),
+            chunk_id= i,
+            text= txt
+        )
+        for i, txt in enumerate(chunks, 1)
+    ]
+
+    chunkModel = await ChunkModel.create_instance(
+                    db_client= request.app.db_client
+                )
+    
+    out = await chunkModel.add_and_delete_chunks(
+        chunks = mod_chunks,
+        company_name = company.Name,
+        company_id = str(company.id)
+    )
+    
+    return JSONResponse(content={
+        "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
+    },
+    status_code=status.HTTP_201_CREATED
+    )
+    
+
+
 
     
     

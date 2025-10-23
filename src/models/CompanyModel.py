@@ -1,6 +1,6 @@
 from .BaseDataModel import BaseDataModel
 from logging import Logger
-from db_schemas import Company
+from .db_schemas import Company
 
 logger = Logger(__name__)
 
@@ -28,7 +28,7 @@ class CompanyModel(BaseDataModel):
             )
     
     async def create_company(self, company: Company):
-        result = await self.collection.insert_one(company.dict())
+        result = await self.collection.insert_one(company.model_dump())
         return company
     
     async def get_company_or_create_one(self, company_name: str):

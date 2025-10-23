@@ -1,9 +1,8 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
 from bson.objectid import ObjectId
-
 from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
+
 
 class PyObjectId(ObjectId):
     @classmethod
@@ -24,12 +23,15 @@ class PyObjectId(ObjectId):
         schema.update(type="string")
         return schema
 
-class Company(BaseModel):
+class Chunk(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    Name: str = Field(..., description="Company name")
-    CreatedAt: datetime = Field(default_factory=datetime.now)
-    IsActive: bool = True
+    company_name: str = Field(..., description="Company name reference")
+    company_id: str = Field(..., description="Company ID")
+    chunk_id: int = Field(..., description="chunk ID")
+    text: str = Field(..., description="Actual chunk content")
 
     class Config:
         json_encoders = {ObjectId: str}
         validate_by_name = True
+
+    

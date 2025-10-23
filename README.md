@@ -65,9 +65,12 @@
 9) created BaseDataModel and BaseController to be the root of data models and controllers
 10) check authentication for admins in dataUpload Endpoint
 11) implement dataController to get data from google form // and process data by company name and convert it to json then json to chunks 
-0) ...cont... ()
-0) ...cont... (Create company Model, to handle company names)
-0) 
+0) - start of adding chunks to database
+0) Company model to handle company names and id with indexing 
+0) chunks schema for mongoDB
+0) chunk Model to handle chunks 
+0) - end of adding chunks to database
+0) - ...cont embedding 
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 
