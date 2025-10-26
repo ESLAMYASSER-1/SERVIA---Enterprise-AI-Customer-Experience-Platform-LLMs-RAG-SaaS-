@@ -39,6 +39,7 @@ class DataController(BaseController):
             csv_url += f"&gid={gid}"
         
         return csv_url
+    
     def get_data_from_GoogleForm(self, csv_path: str, sheet_url:str):
         try:
             # Get the proper CSV URL

@@ -23,8 +23,7 @@ class CompanyModel(BaseDataModel):
             self.collection = self.db_client[self.settings.MONGODB_COMPANY_COLLECTION]
             
             await self.collection.create_index(
-                "Name",
-                unique=True
+                "Name"
             )
     
     async def create_company(self, company: Company):

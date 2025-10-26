@@ -73,11 +73,16 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
         company_id = str(company.id)
     )
     
+    ch = {i:c for i, c in enumerate(chunks)}
     return JSONResponse(content={
-        "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
+        # "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
+        **ch
     },
     status_code=status.HTTP_201_CREATED
     )
+    
+
+
     
 
 
