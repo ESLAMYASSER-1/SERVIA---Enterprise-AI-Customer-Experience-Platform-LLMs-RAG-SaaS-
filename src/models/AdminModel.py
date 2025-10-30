@@ -1,7 +1,7 @@
 from .BaseDataModel import BaseDataModel
-from logging import Logger
+from logging import getLogger
 
-logger = Logger(__name__)
+logger = getLogger(__name__)
 
 
 

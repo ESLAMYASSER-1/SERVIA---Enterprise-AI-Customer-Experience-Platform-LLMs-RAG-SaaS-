@@ -1,4 +1,4 @@
-from logging import Logger
+from logging import getLogger
 import pandas as pd
 import json
 import re
@@ -7,7 +7,7 @@ from urllib.parse import urlparse, parse_qs
 
 from .BaseController import BaseController
 
-logger = Logger(__name__)
+logger = getLogger(__name__)
 
 class DataController(BaseController):
     def __init__(self):
@@ -44,18 +44,15 @@ class DataController(BaseController):
         try:
             # Get the proper CSV URL
             csv_url = self.get_csv_url(sheet_url)
-            logger.info(f"🔄 Converted URL: {csv_url}")
             
-            print("⬇️ Downloading data from Google Sheet...")
+            
             
             # Method 1: Try pandas first
             try:
                 df = pd.read_csv(csv_url)
-                logger.info("✅ Successfully loaded with pandas")
             except Exception as e:
-                logger.error(f"❌ Pandas failed: {e}")
-                logger.info("🔄 Trying with requests...")
-                
+                logger.error(f"❌ failed to read the data with pandas: {e}")
+                logger.info("trying with request...")                
                 # Method 2: Use requests with proper headers
                 headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -69,13 +66,13 @@ class DataController(BaseController):
                 logger.info("✅ Successfully loaded with requests")
             
             if len(df) > 0:
-                logger.info(f"\n🔍 dataframe len:{len(df)}")
+                pass
             else:
                 logger.error("⚠️  No data found in the sheet")
             
             # Save files
             df.to_csv(csv_path, index=False, encoding="utf-8")
-            logger.info(f"✅ Saved as CSV → {csv_path}")
+            logger.info(f"✅ DATA CSV FILE Updated({csv_path})...")
 
             return True
         except Exception as e:
@@ -221,15 +218,16 @@ class DataController(BaseController):
 
     def get_company_chunks(self, google_sheet_url:str, company_name: str, output_path: str = None):
         csv_path = self.get_row_data_path()
-        
+        logger.info("start updating data file....")
         if self.get_data_from_GoogleForm(csv_path, google_sheet_url):
             logger.info("data has been downloaded from google sheets")
         else:
             raise ReferenceError("Google Sheet URL does not exist!!")
 
-        data = self.csv_to_structured_json(csv_path, company_name, output_path)
 
+        data = self.csv_to_structured_json(csv_path, company_name, output_path)
         chunks = self.json_to_chunks(data)
+        logger.info(f"🏢 got chunks for company: {company_name}")
 
         if chunks ==[] or chunks is None:
             logger.error(f"can't get company:{company_name} chunks!! ")

@@ -70,7 +70,8 @@
 0) chunks schema for mongoDB
 0) chunk Model to handle chunks 
 0) - end of adding chunks to database
-0) - ...cont embedding 
+0) - create LLM_Interface to be absract interface for embedding and generation models interfaces
+0) 
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 
@@ -80,4 +81,5 @@
 5) add .gitignore and .env and .env.example
 6) create assets folder and it's .gitignore 
 7) admin should be added using shell to DB
-8) 
+8) create domain forlder which is for main interfaces(abstract classes) and providers(API providers) and services(factories and services handlers)
+9) .cont

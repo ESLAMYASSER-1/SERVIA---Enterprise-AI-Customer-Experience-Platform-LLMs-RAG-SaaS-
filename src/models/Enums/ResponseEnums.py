@@ -6,4 +6,6 @@ class ResponseEnums(Enum):
     AUTHENTICATION_SUCCESS = "Successfully Authenticated"
     ADDED_TO_DATA_BASE = "Chunks Successfully added to DataBase"
     FAILED_TO_ADD_TO_DATA_BASE = "Error while adding chunks to DataBase"
+    FAILED_TO_EMBED_TEXT = "Error While embedding text to vector"
+    FAILED_TO_INITIALIZE_EMBEDDING_MODEL = "Failed to initialize Embedding Model"
     

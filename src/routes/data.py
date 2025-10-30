@@ -6,6 +6,9 @@ from models import ResponseEnums, AdminModel, CompanyModel, ChunkModel
 from controllers import DataController
 from models.db_schemas import Chunk
 
+
+
+
 dataRouter = APIRouter(prefix="/data", tags=["data"])
 settings = Settings()
 
@@ -73,13 +76,24 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
         company_id = str(company.id)
     )
     
-    ch = {i:c for i, c in enumerate(chunks)}
+    
+    if not request.app.llmService.embed_text(chunks[0], "assistant").tolist():
+        return JSONResponse(content={
+        "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
+        "chunk" : chunks[0],
+        },
+        status_code=status.HTTP_201_CREATED
+    )
+    
+
+    
     return JSONResponse(content={
-        # "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
-        **ch
+        "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
+        "chunk" : chunks[0],
     },
     status_code=status.HTTP_201_CREATED
     )
+
     
 
 

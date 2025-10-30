@@ -1,8 +1,8 @@
 from .BaseDataModel import BaseDataModel
-from logging import Logger
+from logging import getLogger
 from .db_schemas import Company
 
-logger = Logger(__name__)
+logger = getLogger(__name__)
 
 
 class CompanyModel(BaseDataModel):

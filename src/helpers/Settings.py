@@ -11,11 +11,19 @@ class Settings(BaseSettings):
     MONGODB_COMPANY_COLLECTION: str = "COMPANY"
     MONGODB_CHUNKS_COLLECTION: str = "CHUNKS"
 
-    ASSETS_FOLDER: str
+    WEAVIATE_URL: str = "http://localhost:8080"
+
+    ASSETS_FOLDER: str = "assets/"
     RAW_DATA_FOLDER:str = "RAW_DATA"
     RAW_DATA_FILE_NAME: str = "CSAB.csv"
 
     GOOGLE_SHEET_URL: str
+
+    EMBEDDING_MODEL_FOLDER: str = "EMBEDDING_MODELS"
+    EMBEDDING_PROVIDER: str|list = ["INTFLOAT"]
+    EMBEDDING_MODEL: str|list = ["intfloat/multilingual-e5-large"]
+    EMBEDDING_MODEL_SIZE: int
+
 
     class Config:
         env_file = ".env"
