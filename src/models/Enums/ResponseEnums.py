@@ -9,3 +9,4 @@ class ResponseEnums(Enum):
     FAILED_TO_EMBED_TEXT = "Error While embedding text to vector"
     FAILED_TO_INITIALIZE_EMBEDDING_MODEL = "Failed to initialize Embedding Model"
     
+    

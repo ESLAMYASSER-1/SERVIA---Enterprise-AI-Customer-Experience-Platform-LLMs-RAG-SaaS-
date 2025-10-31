@@ -5,7 +5,7 @@ from helpers import Settings
 from models import ResponseEnums, AdminModel, CompanyModel, ChunkModel
 from controllers import DataController
 from models.db_schemas import Chunk
-
+# from domain.services.VectorDB import WeaviateDB
 
 
 
@@ -77,15 +77,25 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
     )
     
     
-    if not request.app.llmService.embed_text(chunks[0], "assistant").tolist():
+    vec_chunks = [
+        {
+            "properties": {
+                "company_name": company_name, 
+                "text": chunk,
+            },
+            "vector": request.app.llmService.embed_text(chunk, "query")
+        }
+        for chunk in chunks
+    ]
+
+    if len(vec_chunks) <1:
         return JSONResponse(content={
-        "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
-        "chunk" : chunks[0],
+        "message" : ResponseEnums.FAILED_TO_EMBED_TEXT.value,
         },
         status_code=status.HTTP_201_CREATED
     )
     
-
+    
     
     return JSONResponse(content={
         "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,

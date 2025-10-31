@@ -30,6 +30,6 @@ class Company(BaseModel):
     CreatedAt: datetime = Field(default_factory=datetime.now)
     IsActive: bool = True
 
-    class Config:
+    class ConfigDict:
         json_encoders = {ObjectId: str}
         validate_by_name = True

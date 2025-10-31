@@ -25,6 +25,6 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_SIZE: int
 
 
-    class Config:
+    class ConfigDict:
         env_file = ".env"
 

@@ -30,7 +30,7 @@ class Chunk(BaseModel):
     chunk_id: int = Field(..., description="chunk ID")
     text: str = Field(..., description="Actual chunk content")
 
-    class Config:
+    class ConfigDict:
         json_encoders = {ObjectId: str}
         validate_by_name = True
 

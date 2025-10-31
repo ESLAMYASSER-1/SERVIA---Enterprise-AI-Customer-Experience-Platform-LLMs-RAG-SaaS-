@@ -70,8 +70,13 @@
 0) chunks schema for mongoDB
 0) chunk Model to handle chunks 
 0) - end of adding chunks to database
-0) - create LLM_Interface to be absract interface for embedding and generation models interfaces
-0) 
+0) - start embedding and LLM services 
+0) create LLM_Interface to be absract interface for embedding and generation models interfaces
+0) add Weaviate client connection to the app
+0) create weaviate schema
+0) create weaviate provider
+0) create vectorDB service 
+0) .....cont make service inialization method to run verctorDB all service in one place 
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 

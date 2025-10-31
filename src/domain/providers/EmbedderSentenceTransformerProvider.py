@@ -1,5 +1,5 @@
 from domain.interfaces import LLMInterface
-from domain.emuns import EmbedEnums, DefaultEmbedEnums
+from domain.enums import EmbedEnums, DefaultEmbedEnums
 from helpers import Settings
 
 from logging import getLogger
