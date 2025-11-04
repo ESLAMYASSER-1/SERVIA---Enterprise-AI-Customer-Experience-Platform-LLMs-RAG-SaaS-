@@ -25,10 +25,59 @@
 ```
 - then set your environment variables in <b><i> /src/.env </i></b>
 
+3. Start Docker servers
+- install docker 
+```bash 
+# Uninstall old versions if present
+sudo apt-get remove docker docker-engine docker.io containerd runc
+
+# Update package index and install dependencies
+sudo apt-get update
+sudo apt-get install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+# Add Docker’s official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+    sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# Set up Docker’s stable repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Update the package index again
+sudo apt-get update
+
+# Install Docker Engine, CLI, containerd, Docker Compose plugin
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Add your user to the docker group (enables running docker without sudo)
+sudo usermod -aG docker $USER
+
+# Print installed versions to verify
+docker --version
+docker compose version
+
+echo "Done! Log out and log in again if you want to use 'docker' without sudo."
+```
+
+- build and run servers
+```bash 
+cd docker
+docker compose up --build -d
+cd ..
+```
+
 3. Run your Server
 ```bash 
     cd src
-    uvicorn --reload --port=8000 main:app
+    uvicorn --port=8000 main:app
     cd ..
 ```
 
@@ -54,29 +103,32 @@
 
 ## step by step 
 ### Technical 
-1) initiate main.py as entry point for FastAPI
-2) add pydantic BaseSettings for env vars handling 
-3) add routes/base.py to handle landing endpoint 
-4) add lifespan for FastAPI app to handle startup and shtdown
-5) created ResponseEnums 
-6) created routes/data.py to handle data processes 
-7) add database connection to app that connect when server run
-8) create AdminModel to handle admin operations
-9) created BaseDataModel and BaseController to be the root of data models and controllers
-10) check authentication for admins in dataUpload Endpoint
-11) implement dataController to get data from google form // and process data by company name and convert it to json then json to chunks 
-0) - start of adding chunks to database
-0) Company model to handle company names and id with indexing 
-0) chunks schema for mongoDB
-0) chunk Model to handle chunks 
-0) - end of adding chunks to database
-0) - start embedding and LLM services 
-0) create LLM_Interface to be absract interface for embedding and generation models interfaces
-0) add Weaviate client connection to the app
-0) create weaviate schema
-0) create weaviate provider
-0) create vectorDB service 
-0) .....cont make service inialization method to run verctorDB all service in one place 
+1) start of the project
+0) - initiate main.py as entry point for FastAPI
+0) - add pydantic BaseSettings for env vars handling 
+0) base route and base configurations
+0) - add routes/base.py to handle landing endpoint 
+0) - add lifespan for FastAPI app to handle startup and shtdown
+0) data route
+0) - created ResponseEnums 
+0) - created routes/data.py to handle data processes 
+0) database connection and models 
+0) - add database connection to app that connect when server run
+0) - create AdminModel to handle admin operations
+0) - created BaseDataModel and BaseController to be the root of data models and controllers
+0) - check authentication for admins in dataUpload Endpoint
+0) - implement dataController to get data from google form // and process data by company name and convert it to json then json to chunks 
+0) adding chunks to database
+0) - Company model to handle company names and id with indexing 
+0) - chunks schema for mongoDB
+0) - chunk Model to handle chunks 
+0) embedding and LLM services 
+0) - create LLM_Interface to be absract interface for embedding and generation models interfaces
+0) - add Weaviate client connection to the app
+0) - create weaviate schema
+0) - create weaviate provider
+0) - create vectorDB service  
+0) LLM router and LLM generation 
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 

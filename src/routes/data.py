@@ -5,9 +5,13 @@ from helpers import Settings
 from models import ResponseEnums, AdminModel, CompanyModel, ChunkModel
 from controllers import DataController
 from models.db_schemas import Chunk
-# from domain.services.VectorDB import WeaviateDB
+
+from weaviate.classes.data import DataObject
+
+from logging import getLogger
 
 
+logger = getLogger(__name__)
 
 dataRouter = APIRouter(prefix="/data", tags=["data"])
 settings = Settings()
@@ -83,23 +87,61 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
                 "company_name": company_name, 
                 "text": chunk,
             },
-            "vector": request.app.llmService.embed_text(chunk, "query")
+            "vector": request.app.llmService.embed_text(chunk, "query").detach().cpu().tolist()
         }
         for chunk in chunks
     ]
 
-    if len(vec_chunks) <1:
+    vec_chunks = [
+            DataObject(properties= {
+                "company_name": company_name, 
+                "text": chunk,
+            },
+            vector= request.app.llmService.embed_text(chunk, "query").detach().cpu().tolist())
+        for chunk in chunks
+    ]
+
+    if vec_chunks is None or len(vec_chunks) <1:
         return JSONResponse(content={
         "message" : ResponseEnums.FAILED_TO_EMBED_TEXT.value,
         },
         status_code=status.HTTP_201_CREATED
     )
+
+    vdb_res = await request.app.vdb_service.add_to_VDB(
+                                                        collection= await request.app.vdb_service.General_info_collection,
+                                                        Objects= vec_chunks, 
+                                                        company_name =company_name
+                                                    )
     
+    if vdb_res.has_errors:
+        logger.error("Some records failed to be added to VDB, retrying...")
+        
+        failed_indices = list(vdb_res.errors.keys())
+        
+        retry_data = [vec_chunks[idx] for idx in failed_indices]
+        
+        retry_result = await request.app.vdb_service.add_to_VDB(
+                                                        collection= await request.app.vdb_service.General_info_collection,
+                                                        Objects= retry_data, 
+                                                        company_name =company_name
+                                                    )
+
+        if retry_result.has_errors:
+            for idx, error in retry_result.errors.items():
+                logger.error(f"Retry failed for object #{failed_indices[idx]}: {error}")
+            logger.error("Some records could not be inserted after retry.")
+        else:
+            logger.info("All previously failed inserts succeeded on retry.")
+            
+    else:
+        logger.info("All records inserted successfully to VDB!")
+        
+        
     
     
     return JSONResponse(content={
         "message" : ResponseEnums.ADDED_TO_DATA_BASE.value,
-        "chunk" : chunks[0],
     },
     status_code=status.HTTP_201_CREATED
     )

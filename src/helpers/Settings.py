@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     MONGODB_CHUNKS_COLLECTION: str = "CHUNKS"
 
     WEAVIATE_URL: str = "http://localhost:8080"
+    WEAVIATE_GENERAL_INFO_COLLECTION:str = "GENERAL_INFO"
+    WEAVIATE_ITEMS_COLLECTION:str = "ITEMS"
 
     ASSETS_FOLDER: str = "assets/"
     RAW_DATA_FOLDER:str = "RAW_DATA"
