@@ -129,6 +129,16 @@ cd ..
 0) - create weaviate provider
 0) - create vectorDB service  
 0) LLM router and LLM generation 
+0) - create routes/nlp route
+0) - set the geneartion model provider
+0) - make VDB hypred search based on query and vector 
+0) - edit nlpRouter for query endpoint
+0) - cont .... voice get and then query 
+0) - cont .... llm router 
+0) - cont .... llm generation 
+0) - cont .... Prompt template 
+0) - cont .... Prompt factory 
+
 
 ### NonTechnical
 1) creating file structure and environment using MVC pattern 
