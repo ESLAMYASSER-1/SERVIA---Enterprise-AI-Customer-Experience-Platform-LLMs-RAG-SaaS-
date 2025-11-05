@@ -9,7 +9,7 @@ from helpers import Settings, setup_logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import baseRouter, dataRouter
+from routes import baseRouter, dataRouter, nlpRouter
 
 from domain.services import LLMService, VectorDBService
 
@@ -66,4 +66,5 @@ app.add_middleware(
 
 app.include_router(baseRouter)
 app.include_router(dataRouter)
+app.include_router(nlpRouter)
 

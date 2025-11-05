@@ -32,4 +32,18 @@ class WeaviateDB:
                                     )
         
         return await collection.data.insert_many(Objects)
+    
+    async def retrieve(self,collection, query:str, vector:list, company_name:str):
+        
+        response = await collection.query.hybrid(
+            vector=vector,    
+            query="query",
+            alpha=0.5,               
+            limit=5,
+            filters=Filter.by_property("company_name").equal(company_name),
+            return_metadata=["score", "certainty"],
+            return_properties=["company_name", "text"]
+        )
+        
+        return response.objects
         

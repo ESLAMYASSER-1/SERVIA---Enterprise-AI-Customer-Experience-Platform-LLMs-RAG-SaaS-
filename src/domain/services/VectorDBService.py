@@ -48,6 +48,9 @@ class VectorDBService:
 
         return await self.VDBprovider.insert_many(collection, Objects, company_name)
     
+    async def retrieve(self,collection, query:str, vector:list, company_name:str):
+         return await self.VDBprovider.retrieve(collection, query, vector, company_name)
+
 
     async def close(self):
          await self.client.close()

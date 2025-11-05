@@ -80,17 +80,6 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
         company_id = str(company.id)
     )
     
-    
-    vec_chunks = [
-        {
-            "properties": {
-                "company_name": company_name, 
-                "text": chunk,
-            },
-            "vector": request.app.llmService.embed_text(chunk, "query").detach().cpu().tolist()
-        }
-        for chunk in chunks
-    ]
 
     vec_chunks = [
             DataObject(properties= {
