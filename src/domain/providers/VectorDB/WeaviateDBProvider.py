@@ -1,8 +1,11 @@
 import weaviate 
 from weaviate import Client
 from weaviate.classes.query import Filter
+from weaviate.classes.config import Configure, VectorDistances
 
-from .WeaviateDB_Schema import weaviate_info_schema
+
+
+from .WeaviateDB_Schema import weaviate_info_schema, ResponseSchema
 
 from logging import getLogger
 
@@ -22,6 +25,10 @@ class WeaviateDB:
             collection = await self.client.collections.create(
                 name = collection_name,
                 properties = weaviate_info_schema,
+                vectorizer_config=Configure.Vectorizer.none(),  # ✅ correct way
+                vector_index_config=Configure.VectorIndex.hnsw(
+                    distance_metric=VectorDistances.COSINE
+                ),
             )
             logger.info(f"- Created new VDB collection: ({collection_name}) and connected to it.")
         return collection
@@ -41,9 +48,21 @@ class WeaviateDB:
             alpha=0.5,               
             limit=5,
             filters=Filter.by_property("company_name").equal(company_name),
-            return_metadata=["score", "certainty"],
+            return_metadata=["score"],
             return_properties=["company_name", "text"]
         )
+
+        rec_list=[]
+        for rec in response.objects:
+            rec_list.append(
+                ResponseSchema(
+                    text= rec.properties["text"],
+                    score= rec.metadata.score
+                    )
+                )
+
+        if len(rec_list) < 1 or not rec_list:
+            return 0
         
-        return response.objects
+        return rec_list
         

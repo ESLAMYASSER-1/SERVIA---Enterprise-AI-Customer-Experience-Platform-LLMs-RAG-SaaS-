@@ -1,5 +1,5 @@
 from helpers import Settings
-from domain.providers import EmbedderSentenceTransformerProvider
+from domain.providers import EmbedderSentenceTransformerProvider, GenerationOpenAIProvider
 
 from logging import getLogger
 
@@ -9,6 +9,7 @@ class LLMService:
         self.settings = Settings()
 
         self.embedding_provider = None
+        self.generation_provider = None
 
     @classmethod
     def initialize_service(cls):
@@ -27,11 +28,25 @@ class LLMService:
 
 
         # TODO:add generation model here 
+
+        self.generation_provider = GenerationOpenAIProvider()
+        generation_model_is_created = self.generation_provider.set_generation_model()
+
+        if not generation_model_is_created:
+            logger.error("genration model service can't be initialized")
+            return False
+
+
         return self
         
     def embed_text(self, text: str, doc_type: str = "query"):
 
         return self.embedding_provider.embed_text(text, doc_type)
+    
+    def generate_text(self, text):
+        
+        return self.generation_provider.generate_text(prompt=None, chat_history= text, temperature = None)
+    
         
 
         

@@ -1,1 +1,1 @@
-from .WeaviateDBProvider import WeaviateDB
+from .WeaviateDBProvider import WeaviateDB, ResponseSchema

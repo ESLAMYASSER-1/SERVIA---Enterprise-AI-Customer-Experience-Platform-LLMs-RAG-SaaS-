@@ -77,7 +77,7 @@ cd ..
 3. Run your Server
 ```bash 
     cd src
-    uvicorn --port=8000 main:app
+    uvicorn --port=5000 main:app
     cd ..
 ```
 

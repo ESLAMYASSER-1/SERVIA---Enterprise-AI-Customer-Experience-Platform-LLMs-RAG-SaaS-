@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 
 
+
 from helpers import Settings
 from logging import getLogger
 
@@ -14,6 +15,8 @@ nlpRouter = APIRouter(prefix="/nlp", tags=["nlp"])
 
 @nlpRouter.get("/query/{query}")
 async def query(reqeust: Request, query: str, company_name:str):
+
+
     records = await reqeust.app.vdb_service.retrieve(
         collection= await reqeust.app.vdb_service.General_info_collection,
         query = query,
@@ -24,17 +27,52 @@ async def query(reqeust: Request, query: str, company_name:str):
         company_name = company_name,
     )
 
-    rec_list=[]
-    for rec in records:
-        rec_list.append({
-            "text": rec.properties["text"],
-            "score": rec.metadata.score,
-        })
+    if not records:
+        return JSONResponse(
+        content={
+            "message": "Can't retrieve data!"
+        },
+        status_code=status.HTTP_404_NOT_FOUND,
+    )
 
-    print(rec_list, sep="\n")
+    print(records, sep="\n\n")
+    
+    docs = []
+    for i, rec in enumerate(records, 1):
+        docs.append("\n".join(
+            [
+                f"document # {i}",
+                f"-> {rec.text}"
+            ]
+        ))
+    docs = "\n\n".join([*docs, f"User message: {query} \n Response: "])
+    
+    system_prompt = "\n".join(
+    [
+        "You are a routing model. Your job is to classify the user message into exactly one category and classify the language of the prompt:",
+        "",
+        "1. item — questions about items/products (details, specs, price, availability, item-related customer service).",
+        "2. general — questions about the business, company info, services, offers, policies, or general customer support.",
+        "3. other — anything unrelated to the business or customer service.",
+        "",
+        "Rules:",
+        "- Output only the category name: item, general, or other,",
+        "- Do not explain.",
+        "- Do not add extra text.",
+    ]
+)
+    messages = [
+    {"role": "system", "content": "your are a cutomer service chat bot who answer just based on the documents provided"},
+    {"role": "user", "content": docs},
+]
+    
+    
+    response = reqeust.app.llmService.generate_text(messages)
+    print(response)
+
     return JSONResponse(
         content={
-            "records": "ok"
+            "status":"ok"
         },
         status_code=status.HTTP_201_CREATED,
     )

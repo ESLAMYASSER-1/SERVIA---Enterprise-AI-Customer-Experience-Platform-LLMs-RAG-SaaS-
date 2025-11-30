@@ -13,7 +13,7 @@ services:
       ENABLE_MODULES: ''
       CLUSTER_HOSTNAME: 'node1'
     volumes:
-      - weaviate_data:/data
+      - weaviate_data:/var/lib/weaviate
 
   mongo:
     image: mongo:latest
@@ -25,6 +25,29 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongo_data:/data/db
+
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: vllm-server
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    command: >
+      --model ${MODEL_NAME}
+      --gpu-memory-utilization 0.7
+      --max_model_len 2000
+      --override-generation-config '{"bad_words": ["@", "#", "$", "©", "®"]}'
+    runtime: nvidia
+    ipc: host
 
 
 volumes:

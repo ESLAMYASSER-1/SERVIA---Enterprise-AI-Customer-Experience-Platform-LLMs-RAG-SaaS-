@@ -1,1 +1,2 @@
 from .EmbedderSentenceTransformerProvider import EmbedderSentenceTransformerProvider
+from .GenerationOpenAIProvider import GenerationOpenAIProvider

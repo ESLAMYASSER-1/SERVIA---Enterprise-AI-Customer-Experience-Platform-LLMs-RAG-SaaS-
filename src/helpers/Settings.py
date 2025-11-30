@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_SIZE: int
 
 
+    VLLM_PORT: str|int = "8000"
+    VLLM_URL: str = f"http://localhost:{VLLM_PORT}/v1"
+    ENABLE_THINKING: bool = False
+
     class ConfigDict:
         env_file = ".env"
 

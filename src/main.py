@@ -11,7 +11,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import baseRouter, dataRouter, nlpRouter
 
-from domain.services import LLMService, VectorDBService
 
 
 
@@ -28,6 +27,8 @@ logger.info("CSAP system started")
 async def lifespan(app:FastAPI):
     # Startup code
     print("🚀 App starting up...")
+    from domain.services import LLMService, VectorDBService
+    
     app.mongo_conn = AsyncMongoClient(settings.MONGO_URL)
     app.db_client = app.mongo_conn[settings.MONGO_DB]
     logger.info("########### 1 ###########")
