@@ -7,9 +7,9 @@ from openai import AsyncOpenAI
 logger = getLogger(__name__)
 
 
-class GenerationOpenAIProvider(LLMInterface):
+class LLMRouterOpenAIProvider(LLMInterface):
     def __init__(self):
-        self.generation_model_id = None 
+        self.LLMRouter_model_id = None 
 
         self.client = None
 
@@ -17,7 +17,7 @@ class GenerationOpenAIProvider(LLMInterface):
 
 
 
-    async def set_generation_model(self,):
+    def set_LLMRouter_model(self,):
         self.client = AsyncOpenAI(
         # defaults to os.environ.get("OPENAI_API_KEY")
         api_key="Empty",
@@ -25,10 +25,10 @@ class GenerationOpenAIProvider(LLMInterface):
         )
 
 
-        self.generation_model_id = self.settings.GENERATION_MODEL_NAME
+        self.LLMRouter_model_id = self.client.models.list().data[0].id
 
-        if not self.client or not self.generation_model_id:
-            logger.error("❌ error connecting to Generation model client")
+        if not self.client or not self.LLMRouter_model_id:
+            logger.error("❌ error connecting to LLMRouter model client")
             return False
         
         return True
@@ -39,10 +39,13 @@ class GenerationOpenAIProvider(LLMInterface):
 
         return text
 
-    async def generate_text(self, prompt: str, chat_history: list = [], temperature: float = None):
+    async def classify_prompt(self, prompt: str, chat_history: list = [], temperature: float = None):
+
+        
+
         response = await self.client.chat.completions.create(
             messages=chat_history,
-            model=self.generation_model_id,
+            model=self.LLMRouter_model_id,
             extra_body={
                 "chat_template_kwargs": {
                 "enable_thinking": self.settings.ENABLE_THINKING,
@@ -69,8 +72,5 @@ class GenerationOpenAIProvider(LLMInterface):
 
     def embed_text(self, text: str, doc_type: str = "query"):
         pass
-
-    async def close(self):
-        await self.client.close()
     
 

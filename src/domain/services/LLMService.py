@@ -12,7 +12,7 @@ class LLMService:
         self.generation_provider = None
 
     @classmethod
-    def initialize_service(cls):
+    async def initialize_service(cls):
         self = cls()
         self.embedding_provider = EmbedderSentenceTransformerProvider()
 
@@ -30,11 +30,13 @@ class LLMService:
         # TODO:add generation model here 
 
         self.generation_provider = GenerationOpenAIProvider()
-        generation_model_is_created = self.generation_provider.set_generation_model()
+        generation_model_is_created = await self.generation_provider.set_generation_model()
 
         if not generation_model_is_created:
             logger.error("genration model service can't be initialized")
             return False
+
+        # TODO: add LLMRouter provider here 
 
 
         return self
@@ -46,6 +48,9 @@ class LLMService:
     def generate_text(self, text):
         
         return self.generation_provider.generate_text(prompt=None, chat_history= text, temperature = None)
+    
+    async def close(self):
+        await self.generation_provider.close()
     
         
 

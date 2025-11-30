@@ -38,7 +38,7 @@ async def lifespan(app:FastAPI):
         print("🛑 App Forced to shutting down Can't Initialize VDB service")
     logger.info("########### 2 ###########")
     
-    app.llmService = LLMService.initialize_service()
+    app.llmService = await LLMService.initialize_service()
     if not app.llmService:
         yield
         print("🛑 App Forced to shutting down Can't Initialize LLM Sercice")
@@ -50,6 +50,8 @@ async def lifespan(app:FastAPI):
     print("🛑 App shutting down...")
     await app.mongo_conn.close()
     await app.vdb_service.close()
+    await app.llmService.close()
+
 
 
 

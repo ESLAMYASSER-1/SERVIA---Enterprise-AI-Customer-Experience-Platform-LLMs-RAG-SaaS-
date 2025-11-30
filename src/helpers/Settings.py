@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL: str|list = ["intfloat/multilingual-e5-large"]
     EMBEDDING_MODEL_SIZE: int
 
+    GENERATION_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
+    ROUTING_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
 
     VLLM_PORT: str|int = "8000"
     VLLM_URL: str = f"http://localhost:{VLLM_PORT}/v1"
