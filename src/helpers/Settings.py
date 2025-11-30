@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     GENERATION_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
     ROUTING_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
 
+    DEFAULT_LANGUAGE:str = "en"
+
     VLLM_PORT: str|int = "8000"
     VLLM_URL: str = f"http://localhost:{VLLM_PORT}/v1"
     ENABLE_THINKING: bool = False

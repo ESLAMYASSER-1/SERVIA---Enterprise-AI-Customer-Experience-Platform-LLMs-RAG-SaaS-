@@ -30,7 +30,9 @@ class LLMService:
         # TODO:add generation model here 
 
         self.generation_provider = GenerationOpenAIProvider()
+        await self.generation_provider.set_generation_language(self.settings.DEFAULT_LANGUAGE)
         generation_model_is_created = await self.generation_provider.set_generation_model()
+        
 
         if not generation_model_is_created:
             logger.error("genration model service can't be initialized")
@@ -45,9 +47,9 @@ class LLMService:
 
         return self.embedding_provider.embed_text(text, doc_type)
     
-    def generate_text(self, text):
+    def generate_text(self, prompt: str, records:list=[], chat_history: list = [], temperature: float = None):
         
-        return self.generation_provider.generate_text(prompt=None, chat_history= text, temperature = None)
+        return self.generation_provider.generate_text(prompt=prompt, records = records, chat_history= chat_history, temperature=temperature)
     
     async def close(self):
         await self.generation_provider.close()

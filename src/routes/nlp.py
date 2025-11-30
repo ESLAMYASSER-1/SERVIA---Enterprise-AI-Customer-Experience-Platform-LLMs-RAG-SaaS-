@@ -81,14 +81,13 @@ nlpRouter = APIRouter(prefix="/nlp", tags=["nlp"])
 @nlpRouter.websocket("/query/{company_name}")
 async def query(websocket: WebSocket, company_name: str):
     await websocket.accept()
-    
-    messages = [
-        {"role": "system", "content": "your are a cutomer service chat bot who answer just based on the documents provided"},
-    ]
 
-    
+    chat_history = []
+
+
     while True:
         query = await websocket.receive_text()
+
         records = await websocket.app.vdb_service.retrieve(
             collection= await websocket.app.vdb_service.General_info_collection,
             query = query,
@@ -99,29 +98,12 @@ async def query(websocket: WebSocket, company_name: str):
             company_name = company_name,
         )
 
-        if not records:
-            return JSONResponse(
-            content={
-                "message": "Can't retrieve data!"
-            },
-            status_code=status.HTTP_404_NOT_FOUND,
-        )
-
-        # print(records, sep="\n\n")
+        print(records, sep="\n\n")
         
-        docs = []
-        for i, rec in enumerate(records, 1):
-            docs.append("\n".join(
-                [
-                    f"document # {i}",
-                    f"-> {rec.text}"
-                ]
-            ))
-        docs = "\n\n".join([*docs, f"User message: {query} \n Response: "])
-        messages.append({"role": "user", "content": docs})
         
-        response = await websocket.app.llmService.generate_text(messages)
-        messages.append({"role":"assistant", "content":response["text"]})
+        
+        response, chat_history = await websocket.app.llmService.generate_text(query, records, chat_history)
+        
         print(response)
 
         await websocket.send_text(response["text"]+" \n\n"+f"TOTAL_TOKENS: {response["total_tokens"]}")

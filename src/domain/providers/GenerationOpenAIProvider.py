@@ -2,7 +2,7 @@ from domain.interfaces import LLMInterface
 from helpers import Settings
 from logging import getLogger
 from openai import AsyncOpenAI
-
+from domain.templates import RAGTemplateParser
 
 logger = getLogger(__name__)
 
@@ -14,6 +14,9 @@ class GenerationOpenAIProvider(LLMInterface):
         self.client = None
 
         self.settings = Settings()
+
+        self.template_parser = RAGTemplateParser()
+        
 
 
 
@@ -33,13 +36,19 @@ class GenerationOpenAIProvider(LLMInterface):
         
         return True
 
+    async def set_generation_language(self, lang):
+        self.template_parser.language = lang
+        return True
 
     def text_process(self, text: str):
         text = text.strip(" ").replace("\n", " ")
 
         return text
 
-    async def generate_text(self, prompt: str, chat_history: list = [], temperature: float = None):
+    async def generate_text(self, prompt: str, records:list=[], chat_history: list = [], temperature: float = None):
+
+        chat_history = self.construct_prompt(prompt, records, chat_history)
+
         response = await self.client.chat.completions.create(
             messages=chat_history,
             model=self.generation_model_id,
@@ -52,16 +61,41 @@ class GenerationOpenAIProvider(LLMInterface):
         if not response.choices[0].message.content:
             return False
         
-        return {
+        response = {
             "text":response.choices[0].message.content,
             "reasoning":getattr(response.choices[0].message, "reasoning_content", None),
             "completion_tokens":response.usage.completion_tokens,
             "prompt_tokens":response.usage.prompt_tokens,
             "total_tokens":response.usage.total_tokens,
         }
+
+        chat_history = self.construct_prompt(prompt, records, chat_history)
+
+        return response, chat_history
     
-    def construct_prompt(self, prompt: str, role: str):
-        pass
+    def construct_prompt(self, prompt: str, records:list=[], chat_history: list= []):
+
+        if chat_history == [] or len(chat_history) == 0:
+            chat_history = []
+            chat_history.append(
+                {
+                    "role":"system",
+                    "content":self.template_parser.system_prompt()
+                }
+            )
+        
+        if isinstance(prompt, dict):
+            chat_history.append(
+                {"role":"assistant", "content":prompt["text"]}
+            )
+        
+        if isinstance(prompt, str):
+            chat_history.append(
+                {"role":"user", "content": self.template_parser.user_prompt(prompt, records)}
+            )
+        return chat_history
+        
+
 
 
     def set_embedding_model(self, embedding_model_id: str, embedding_size: int):
