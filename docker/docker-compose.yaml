@@ -13,7 +13,7 @@ services:
       ENABLE_MODULES: ''
       CLUSTER_HOSTNAME: 'node1'
     volumes:
-      - weaviate_data:/var/lib/weaviate
+      - weaviate_data:/data
 
   mongo:
     image: mongo:latest
@@ -43,8 +43,8 @@ services:
             - capabilities: [gpu]
     command: >
       --model ${MODEL_NAME}
-      --gpu-memory-utilization 0.7
-      --max_model_len 2000
+      --gpu-memory-utilization 0.8
+      --max_model_len 5000
       --override-generation-config '{"bad_words": ["@", "#", "$", "©", "®"]}'
     runtime: nvidia
     ipc: host

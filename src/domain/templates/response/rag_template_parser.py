@@ -11,7 +11,6 @@ class RAGTemplateParser:
         self.user_prompt = None
         
 
-
     @property
     def language(self):
         if self._language is None:
@@ -28,8 +27,7 @@ class RAGTemplateParser:
                 self._language = language
                 self.system_prompt = getattr(module, "system_prompt")
                 self.user_prompt = getattr(module, "user_prompt")
-                print(language, "ok one")
-
+                
         elif Path.exists(self.get_lang_module_path()):
             
             module = self.import_from_path(self.get_lang_module_path())
@@ -37,10 +35,8 @@ class RAGTemplateParser:
                 self._language = settings.DEFAULT_LANGUAGE
                 self.system_prompt = getattr(module, "system_prompt")
                 self.user_prompt = getattr(module, "user_prompt")
-                print(language, "ok two")
-
+               
         else:
-            print(language, "ok three")
 
             return None
 
