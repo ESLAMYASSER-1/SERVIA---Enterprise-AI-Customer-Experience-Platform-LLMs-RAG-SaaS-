@@ -49,7 +49,7 @@ class GenerationOpenAIProvider(LLMInterface):
 
         chat_history = self.construct_prompt(prompt, records, chat_history)
 
-        lite_chat_history = [chat_history[0]] + chat_history[-3:] if (len(chat_history) > 4) else chat_history
+        lite_chat_history = [chat_history[0]] + chat_history[-(self.settings.CHAT_CONTEXT_LEN-1):] if (len(chat_history) > self.settings.CHAT_CONTEXT_LEN) else chat_history
         
         response = await self.client.chat.completions.create(
             messages=lite_chat_history,

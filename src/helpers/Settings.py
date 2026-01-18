@@ -28,7 +28,7 @@ class Settings(BaseSettings):
 
     GENERATION_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
     ROUTING_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
-
+    CHAT_CONTEXT_LEN:int = 4
     DEFAULT_LANGUAGE:str = "en"
 
     VLLM_PORT: str|int = "8000"
