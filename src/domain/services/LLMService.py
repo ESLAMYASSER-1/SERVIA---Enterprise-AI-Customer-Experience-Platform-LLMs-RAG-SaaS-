@@ -1,5 +1,5 @@
 from helpers import Settings
-from domain.providers import EmbedderSentenceTransformerProvider, GenerationOpenAIProvider
+from domain.providers import EmbedderSentenceTransformerProvider, GenerationOpenAIProvider, LLMRouterOpenAIProvider
 
 from logging import getLogger
 
@@ -10,6 +10,7 @@ class LLMService:
 
         self.embedding_provider = None
         self.generation_provider = None
+        self.llmRouter_provider = None
 
     @classmethod
     async def initialize_service(cls):
@@ -39,6 +40,7 @@ class LLMService:
             return False
 
         # TODO: add LLMRouter provider here 
+        self.llmRouter_provider = LLMRouterOpenAIProvider()
 
 
         return self
@@ -50,6 +52,9 @@ class LLMService:
     def generate_text(self, prompt: str, records:list=[], chat_history: list = [], temperature: float = None):
         
         return self.generation_provider.generate_text(prompt=prompt, records = records, chat_history= chat_history, temperature=temperature)
+    
+    def classify_prompt(self, prompt, client):
+        return self.llmRouter_provider.classify_prompt(prompt, client)
     
     async def close(self):
         await self.generation_provider.close()

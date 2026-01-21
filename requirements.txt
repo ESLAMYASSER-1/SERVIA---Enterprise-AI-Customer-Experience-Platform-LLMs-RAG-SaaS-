@@ -10,3 +10,4 @@ sentence-transformers==5.1.2
 weaviate-client==4.17.0
 openai==2.8.1
 websockets==15.0.1
+faster-whisper==1.2.1

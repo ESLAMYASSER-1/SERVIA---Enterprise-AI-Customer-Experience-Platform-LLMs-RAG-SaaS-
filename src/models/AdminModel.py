@@ -26,7 +26,7 @@ class AdminModel(BaseDataModel):
         del result["_id"]
 
 
-        logger.info(f"Admin{result["mongo_id"]} has logged in to the system")
+        logger.info(f"Admin{result['mongo_id']} has logged in to the system")
         return True
 
         

@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     ROUTING_MODEL_NAME:str|list=["Qwen/Qwen3-0.6B"]
     CHAT_CONTEXT_LEN:int = 4
     DEFAULT_LANGUAGE:str = "en"
+ 
+    STT_MODELS_FOLDER: str = "STT_MODELS"
+    WHISPER_MODEL_SIZE:str = "base"
+    WHISPER_COMPUTE_TYPE:str = "float16"
+    WHISPER_BEAM_SIZE:int = 5
 
     VLLM_PORT: str|int = "8000"
     VLLM_URL: str = f"http://localhost:{VLLM_PORT}/v1"

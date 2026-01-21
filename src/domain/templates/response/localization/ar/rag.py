@@ -100,7 +100,7 @@ def user_prompt(prompt: str, docs: list):
         userPrompt.append(
             "\n".join([
                 f"[المستند {i}]",
-                f"-> {doc.text}"
+                f"-> {getattr(doc, 'text', '')}"
             ])
         )
 

@@ -1,2 +1,4 @@
 from .EmbedderSentenceTransformerProvider import EmbedderSentenceTransformerProvider
 from .GenerationOpenAIProvider import GenerationOpenAIProvider
+from .WhisperProvider import WhisperProvider
+from .LLMRouterOpenAIProvider import LLMRouterOpenAIProvider

@@ -71,7 +71,7 @@ class GenerationOpenAIProvider(LLMInterface):
             "total_tokens":response.usage.total_tokens,
         }
 
-        chat_history = self.construct_prompt(prompt, records, chat_history)
+        # chat_history = self.construct_prompt(prompt, records, chat_history)
 
         return response, chat_history
     

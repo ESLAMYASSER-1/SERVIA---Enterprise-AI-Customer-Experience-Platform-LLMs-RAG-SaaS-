@@ -43,8 +43,8 @@ services:
             - capabilities: [gpu]
     command: >
       --model ${MODEL_NAME}
-      --gpu-memory-utilization 0.8
-      --max_model_len 5000
+      --gpu-memory-utilization 0.7
+      --max_model_len 4000
       --override-generation-config '{"bad_words": ["@", "#", "$", "©", "®"]}'
     runtime: nvidia
     ipc: host

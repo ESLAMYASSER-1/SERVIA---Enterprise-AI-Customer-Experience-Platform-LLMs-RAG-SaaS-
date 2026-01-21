@@ -27,7 +27,7 @@ logger.info("CSAP system started")
 async def lifespan(app:FastAPI):
     # Startup code
     print("🚀 App starting up...")
-    from domain.services import LLMService, VectorDBService
+    from domain.services import LLMService, VectorDBService, AudioService
     
     app.mongo_conn = AsyncMongoClient(settings.MONGO_URL)
     app.db_client = app.mongo_conn[settings.MONGO_DB]
@@ -44,13 +44,18 @@ async def lifespan(app:FastAPI):
         print("🛑 App Forced to shutting down Can't Initialize LLM Sercice")
     logger.info("########### 3 ###########")
 
-
+    app.audioService = AudioService.initialize_service()
+    if not app.audioService:
+        yield
+        print("🛑 App Forced to shutting down Can't Initialize Audio Sercice")
+    logger.info("########### 4 ###########")
     yield
     # Shutdown code
     print("🛑 App shutting down...")
     await app.mongo_conn.close()
     await app.vdb_service.close()
     await app.llmService.close()
+    app.audioService.close()
 
 
 
