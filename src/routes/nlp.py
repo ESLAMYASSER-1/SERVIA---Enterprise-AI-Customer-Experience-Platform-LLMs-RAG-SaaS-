@@ -162,7 +162,7 @@ async def query(websocket: WebSocket, company_name: str):
             
             query = " ".join(seg.text for seg in segments) # the transcript 
             
-            print(query)
+            # print(query)
 
         lang = await websocket.app.llmService.classify_prompt(query,
                                                             websocket.app.llmService.generation_provider.client
@@ -170,7 +170,7 @@ async def query(websocket: WebSocket, company_name: str):
         if not lang:
             lang = "en"
 
-        print(lang)
+        # print(lang)
         websocket.app.llmService.generation_provider.template_parser.language = lang
 
         records = await websocket.app.vdb_service.retrieve(
@@ -185,7 +185,7 @@ async def query(websocket: WebSocket, company_name: str):
 
         response, chat_history = await websocket.app.llmService.generate_text(query, records, manager.wb_chat_histories[websocket])
         manager.wb_chat_histories[websocket] = chat_history
-        print(chat_history)
+        # print(chat_history)
         # print(response)
 
         await manager.send_text(response["text"], websocket)

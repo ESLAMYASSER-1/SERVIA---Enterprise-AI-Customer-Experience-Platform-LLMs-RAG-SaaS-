@@ -27,6 +27,6 @@ class AdminModel(BaseDataModel):
 
 
         logger.info(f"Admin{result['mongo_id']} has logged in to the system")
-        return True
+        return True, result["Role"]
 
         

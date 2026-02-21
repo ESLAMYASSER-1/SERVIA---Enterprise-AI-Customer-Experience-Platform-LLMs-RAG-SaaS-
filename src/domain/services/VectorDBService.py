@@ -1,4 +1,5 @@
-import weaviate 
+import weaviate
+from weaviate.classes.init import Auth 
 
 from helpers import Settings
 from domain.providers.VectorDB import WeaviateDB
@@ -21,9 +22,23 @@ class VectorDBService:
     @classmethod
     async def initialize_service(cls):
             self = cls()
-            weaviate_params = weaviate.connect.ConnectionParams.from_url(url= self.settings.WEAVIATE_URL, grpc_port = 50051, )
-            self.client =  weaviate.WeaviateAsyncClient(connection_params= weaviate_params)
-            await self.client.connect()
+
+            if self.settings.WEAVIATE_LOCAL_OR_CLOUD in ["local", "LOCAL"]:
+                weaviate_params = weaviate.connect.ConnectionParams.from_url(
+                    url= self.settings.WEAVIATE_URL,
+                    grpc_port = 50051,
+                )
+
+                self.client =  weaviate.WeaviateAsyncClient(connection_params= weaviate_params)
+                await self.client.connect()
+            elif self.settings.WEAVIATE_LOCAL_OR_CLOUD in ["cloud", "CLOUD"]:
+                self.client = weaviate.use_async_with_weaviate_cloud(
+                    cluster_url=self.settings.WEAVIATE_URL,
+                    auth_credentials=Auth.api_key(self.settings.WEAVIATE_API_KEY),
+                )
+                await self.client.connect()
+
+
             self.VDBprovider = WeaviateDB(vdb_client= self.client)
             
             return self
@@ -54,3 +69,5 @@ class VectorDBService:
 
     async def close(self):
          await self.client.close()
+
+         

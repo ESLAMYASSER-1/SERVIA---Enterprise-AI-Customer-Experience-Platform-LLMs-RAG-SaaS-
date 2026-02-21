@@ -26,9 +26,9 @@ logger.info("CSAP system started")
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     # Startup code
-    print("🚀 App starting up...")
+    print("🚀 App is importing needed services...")
     from domain.services import LLMService, VectorDBService, AudioService
-    
+    print("🚀 App starting up...")
     app.mongo_conn = AsyncMongoClient(settings.MONGO_URL)
     app.db_client = app.mongo_conn[settings.MONGO_DB]
     logger.info("########### 1 ###########")

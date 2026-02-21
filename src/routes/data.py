@@ -29,7 +29,7 @@ async def InitiateCompany(request: Request, company_name:str, Admin_name: str|No
                             db_client=request.app.db_client
                             )
 
-    adminIsExist = await adminModel.check_if_admin_exists(
+    adminIsExist, adminRole = await adminModel.check_if_admin_exists(
                             Admin_name=Admin_name,
                             Admin_password=Admin_password
                             )
