@@ -114,7 +114,7 @@ The script performs the following actions:
 1.  Ensures Docker services are running.
 2.  Installs Python dependencies.
 3.  Applies a fix for the `cryptography` library.
-4.  Initializes MongoDB with a default admin: `(Name: "eslam", Password: "eslam")`.
+4.  Initializes MongoDB with a default admin: `(Name: [Name], Password: [Password])`.
 5.  Starts the FastAPI application on `http://0.0.0.0:5000`.
 
 Your SERVIA instance is now running!
@@ -129,7 +129,7 @@ You must provide the admin credentials (initialized by `run_csab.sh`) as query p
 
 **Example using `curl`:**
 ```bash
-curl -X GET "http://localhost:5000/data/start/Talabat?Admin_name=eslam&Admin_password=eslam"
+curl -X GET "http://localhost:5000/data/start/Talabat?Admin_name=[Name]&Admin_password=[Password]"
 ```
 Replace `Talabat` with the name of the company as it appears in your Google Sheet.
 
