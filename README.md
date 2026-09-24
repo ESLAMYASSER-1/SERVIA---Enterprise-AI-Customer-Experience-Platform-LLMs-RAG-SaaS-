@@ -1,4 +1,4 @@
-# Customer Service App Builder APP
+# SERVIA - Enterprise AI Customer Experience Platform (LLMs + RAG + SaaS)
 
 ### This app focuses on making the automation of building customer service support system available in fast, easy and robust way using the SOTA in AI, automation, and DevOps techniques
 
