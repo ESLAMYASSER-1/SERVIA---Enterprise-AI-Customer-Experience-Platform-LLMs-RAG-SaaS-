@@ -3,7 +3,6 @@
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 A multi-tenant, production-oriented AI platform for automating customer support. SERVIA combines Retrieval-Augmented Generation (RAG), multi-modal input (text + voice), and a scalable microservice architecture to deliver context-aware, multi-lingual customer support at scale.
 
@@ -134,7 +133,3 @@ servia/
 ## Contributing
 
 Issues and pull requests are welcome — see [Issues](../../issues) to get started.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
